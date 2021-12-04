@@ -1,24 +1,20 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
-import { UserModule } from './modules/user/user.module';
-import { DatabaseModule } from './modules/database/database.module';
-import { SharedModule } from './modules/shared/shared.module';
-
+import { UsersModule } from './modules/users/users.module';
+import { TypeOrmModule } from "@nestjs/typeorm";
+import * as ormPgConfig from './database/config/type-orm-pg.config'
 
 @Module({
   imports: [
-    AuthModule,
-    UserModule,
-    DatabaseModule,
-    SharedModule
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(ormPgConfig),
+    AuthModule, 
+    UsersModule,
   ],
-  controllers: [
-    // AppController
-  ],
-  providers: [
-    // AppService
-  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

@@ -5,7 +5,7 @@ export class NewUserDto {
   readonly password: string;
   readonly name: string;
   readonly surname: string;
-  readonly birthday: string;
+  readonly birthday: Date;
 
   constructor(passHash: string, regDto: RegistrationUserDto) {
     this.email = regDto.email;

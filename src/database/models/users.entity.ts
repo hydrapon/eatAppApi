@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Index("uni_users_email", ["email"], { unique: true })
 @Index("users_pkey", ["id"], { unique: true })
@@ -20,7 +20,7 @@ export class UsersEntity {
   surname: string;
 
   @Column("character varying", { name: "birthday", length: 255 })
-  birthday: string;
+  birthday: Date;
 
   @Column("character varying", { name: "avatar", length: 255, default: 'defaultAvatar' })
   avatar: string;

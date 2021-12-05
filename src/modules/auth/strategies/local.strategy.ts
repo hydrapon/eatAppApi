@@ -22,8 +22,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException("Логин или пароль указаны неверно");
     }
 
-    return user;
-
     if (user.status == UserStatus.UNAPPROVED) {
       throw new UnauthorizedException("Аккаунт не подтвержден");
     }

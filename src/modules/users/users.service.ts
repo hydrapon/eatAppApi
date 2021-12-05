@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserStatus } from 'src/common/enums/user-status.enum';
 import { UsersEntity } from 'src/database/models/users.entity';
 import { Repository } from "typeorm";
 import { ApprovedDataDto } from '../auth/dto/approved-data.auth.dto';
@@ -35,6 +36,23 @@ export class UsersService {
     }
 
     await this.userRepository.save(user);
+  }
+
+  public async approvedUser(id: number): Promise<void> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new HttpException("Пользователь не найден", HttpStatus.NOT_FOUND)
+    }
+
+    user.approvedCode = null;
+    user.approvedHash = null;
+    user.status = UserStatus.APPROVED;
+
+    try {
+      await this.userRepository.save(user);
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
 }

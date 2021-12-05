@@ -14,6 +14,7 @@ import { contactsOptions } from "../../common/options/contact.option";
 import { ApprovedDataDto } from './dto/approved-data.auth.dto';
 import { GenerateString } from 'src/common/services/string-generator.service';
 import { GenerateCode } from 'src/common/services/code-generator.service';
+import { ApprovedUserRequestDto } from './dto/approved-user-request.auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -99,6 +100,28 @@ export class AuthService {
       }
     }
     throw new UnauthorizedException({ message: 'Невалидный токен' });
+  }
+
+  async approved(approvedUserRequestDto: ApprovedUserRequestDto) {
+    if (!approvedUserRequestDto.hash && !approvedUserRequestDto.code) {
+      throw new HttpException("Ошибка подтверждения", HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.userService.findByOneEmail(approvedUserRequestDto.email);
+    if (!user) {
+      throw new HttpException("Пользователь не найден", HttpStatus.NOT_FOUND);
+    }
+
+    if (approvedUserRequestDto.code && user.approvedCode === approvedUserRequestDto.code) {
+      await this.userService.approvedUser(user.id);
+      return "ok"
+    }
+
+    if (approvedUserRequestDto.hash && user.approvedHash === approvedUserRequestDto.hash) {
+      await this.userService.approvedUser(user.id);
+      return "ok"
+    }
+    throw new HttpException("Ошибка подтверждения", HttpStatus.BAD_REQUEST);
   }
 
   private async generateToken(user: UsersEntity | UserAuthDto): Promise<TokensAuthResponseDto> {
